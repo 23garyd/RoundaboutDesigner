@@ -1,0 +1,317 @@
+﻿<UserControl x:Class="RoundaboutDesigner.UI.RoundaboutDesignerView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:ui="clr-namespace:RoundaboutDesigner.UI"
+             xmlns:helpers="clr-namespace:RoundaboutDesigner.UI.Helpers"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance Type=ui:RoundaboutDesignerViewModel}"
+             d:DesignHeight="800" d:DesignWidth="420">
+
+    <UserControl.Resources>
+        <helpers:NullToVisibilityConverter x:Key="NullToVisibility"/>
+        <helpers:SizeTierToVisibilityConverter x:Key="SizeTierToVisibility"/>
+        <helpers:RoleToColorConverter x:Key="RoleToColor"/>
+        <helpers:RoleToFontSizeConverter x:Key="RoleToFontSize"/>
+        <helpers:BoolToStatusColorConverter x:Key="BoolToStatusColor"/>
+        <helpers:StateToColorConverter x:Key="StateToColor"/>
+        <helpers:ScoreToColorConverter x:Key="ScoreToColor"/>
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+        <Style x:Key="SectionLabel" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#666"/>
+            <Setter Property="Margin" Value="0,0,0,6"/>
+        </Style>
+        <Style x:Key="PrimaryButton" TargetType="Button">
+            <Setter Property="Background" Value="#185FA5"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="10"/>
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style>
+    </UserControl.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="12">
+
+            <!-- Study area -->
+            <TextBlock Text="STUDY AREA" Style="{StaticResource SectionLabel}"/>
+            <ComboBox ItemsSource="{Binding States}"
+                      SelectedItem="{Binding SelectedState}"
+                      Margin="0,0,0,8"/>
+
+            <TextBox Text="{Binding CitySearchText, UpdateSourceTrigger=PropertyChanged}"
+                     Margin="0,0,0,8" Padding="6"
+                     d:Text="Search cities..."/>
+
+            <Border BorderBrush="#DDD" BorderThickness="1" CornerRadius="4" MaxHeight="200">
+                <ListBox ItemsSource="{Binding Cities}"
+                         SelectedItem="{Binding SelectedCity}"
+                         BorderThickness="0"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="{Binding Name}" FontSize="12"/>
+                                <TextBlock Grid.Column="1" Text="{Binding Population, StringFormat=N0}"
+                                           Foreground="#888" FontSize="11" Margin="8,0,8,0"/>
+                                <TextBlock Grid.Column="2" Text="{Binding SizeTier}"
+                                           FontSize="10" FontWeight="SemiBold"
+                                           Foreground="#A85C00"
+                                           Visibility="{Binding SizeTier, Converter={StaticResource SizeTierToVisibility}}"/>
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Border>
+
+            <Border Background="#F4F4F4" CornerRadius="4" Padding="10" Margin="0,8,0,8">
+                <StackPanel>
+                    <TextBlock Text="{Binding SelectedAreaDisplay}" FontWeight="SemiBold" FontSize="12"/>
+                    <TextBlock Text="{Binding SelectedAreaSubtext}" Foreground="#666" FontSize="11" Margin="0,2,0,0"/>
+                    <TextBlock Text="{Binding SelectedAreaWarning}" Foreground="#A85C00" FontSize="11" Margin="0,4,0,0"
+                               TextWrapping="Wrap"
+                               Visibility="{Binding SelectedAreaWarning, Converter={StaticResource NullToVisibility}}"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Data source tracker (always visible) -->
+            <Border Background="#F4F4F4" CornerRadius="4" Padding="10" Margin="0,0,0,12">
+                <StackPanel>
+                    <TextBlock Text="DATA SOURCES" Style="{StaticResource SectionLabel}"/>
+                    <ItemsControl ItemsSource="{Binding DataSources}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="0,2">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="16"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="{Binding StatusGlyph}" FontWeight="Bold"
+                                               Foreground="{Binding State, Converter={StaticResource StateToColor}}"/>
+                                    <TextBlock Grid.Column="1" Text="{Binding Display}" FontSize="11" Margin="4,0,0,0"/>
+                                    <TextBlock Grid.Column="2" Text="{Binding StatusText}" FontSize="11" Foreground="#888"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Border>
+            
+            <!-- Scoring weights -->
+            <Expander Header="Scoring weights" Margin="0,0,0,12" FontSize="12">
+                <StackPanel Margin="0,8,0,0">
+                    <Grid Margin="0,2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="90"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="36"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Safety" FontSize="11" VerticalAlignment="Center"/>
+                        <Slider Grid.Column="1" Minimum="0" Maximum="100" Value="{Binding SafetyWeight}"
+                                TickFrequency="5" IsSnapToTickEnabled="True"/>
+                        <TextBlock Grid.Column="2" Text="{Binding SafetyWeight}" TextAlignment="Right" FontSize="11"/>
+                    </Grid>
+                    <Grid Margin="0,2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="90"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="36"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Traffic" FontSize="11" VerticalAlignment="Center"/>
+                        <Slider Grid.Column="1" Minimum="0" Maximum="100" Value="{Binding TrafficWeight}"
+                                TickFrequency="5" IsSnapToTickEnabled="True"/>
+                        <TextBlock Grid.Column="2" Text="{Binding TrafficWeight}" TextAlignment="Right" FontSize="11"/>
+                    </Grid>
+                    <Grid Margin="0,2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="90"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="36"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Feasibility" FontSize="11" VerticalAlignment="Center"/>
+                        <Slider Grid.Column="1" Minimum="0" Maximum="100" Value="{Binding FeasibilityWeight}"
+                                TickFrequency="5" IsSnapToTickEnabled="True"/>
+                        <TextBlock Grid.Column="2" Text="{Binding FeasibilityWeight}" TextAlignment="Right" FontSize="11"/>
+                    </Grid>
+                    <Grid Margin="0,2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="90"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="36"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Multimodal" FontSize="11" VerticalAlignment="Center"/>
+                        <Slider Grid.Column="1" Minimum="0" Maximum="100" Value="{Binding MultimodalWeight}"
+                                TickFrequency="5" IsSnapToTickEnabled="True"/>
+                        <TextBlock Grid.Column="2" Text="{Binding MultimodalWeight}" TextAlignment="Right" FontSize="11"/>
+                    </Grid>
+                    <Grid Margin="0,2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="90"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="36"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Destinations" FontSize="11" VerticalAlignment="Center"/>
+                        <Slider Grid.Column="1" Minimum="0" Maximum="100" Value="{Binding DestinationsWeight}"
+                                TickFrequency="5" IsSnapToTickEnabled="True"/>
+                        <TextBlock Grid.Column="2" Text="{Binding DestinationsWeight}" TextAlignment="Right" FontSize="11"/>
+                    </Grid>
+                </StackPanel>
+            </Expander>
+
+            <!-- Candidate count -->
+            <Border Background="#F4F4F4" CornerRadius="4" Padding="10" Margin="0,0,0,10">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="32"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="Max candidates" FontSize="12" FontWeight="SemiBold"
+                               VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <Slider Grid.Column="1" Minimum="5" Maximum="50" Value="{Binding MaxCandidates}"
+                            TickFrequency="5" IsSnapToTickEnabled="True" VerticalAlignment="Center"/>
+                    <TextBlock Grid.Column="2" Text="{Binding MaxCandidates}" TextAlignment="Right"
+                               FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                </Grid>
+            </Border>
+
+            <!-- Run button -->
+            <Button Content="{Binding RunButtonLabel}"
+                    Command="{Binding RunAnalysisCommand}"
+                    Style="{StaticResource PrimaryButton}"
+                    Margin="0,0,0,12"/>
+            <!-- Top candidates list -->
+            <Border Background="#F4F4F4" CornerRadius="4" Padding="10" Margin="0,0,0,12"
+                    Visibility="{Binding HasCandidates, Converter={StaticResource BoolToVis}}">
+                <StackPanel>
+                    <TextBlock Text="TOP CANDIDATES" Style="{StaticResource SectionLabel}"/>
+                    <ListBox ItemsSource="{Binding TopCandidates}"
+                             SelectedItem="{Binding SelectedCandidateItem}"
+                             BorderThickness="0" Background="Transparent"
+                             MaxHeight="220"
+                             ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="0,3">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="28"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Border Grid.Column="0" Background="{Binding Score, Converter={StaticResource ScoreToColor}}" CornerRadius="3"
+                                            Width="22" Height="22" VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding ScoreLabel}" Foreground="White"
+                                       FontSize="10" FontWeight="Bold"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <TextBlock.Effect>
+                                                <DropShadowEffect Color="Black" ShadowDepth="0" BlurRadius="2" Opacity="0.8"/>
+                                            </TextBlock.Effect>
+                                        </TextBlock>
+                                    </Border>
+                                    <StackPanel Grid.Column="1" Margin="6,0,0,0" VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding Name}" FontSize="11" FontWeight="SemiBold"
+                                                   TextTrimming="CharacterEllipsis"/>
+                                        <TextBlock Text="{Binding Summary}" FontSize="10" Foreground="#888"/>
+                                    </StackPanel>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </StackPanel>
+            </Border>
+
+            <!-- Selected candidate score breakdown -->
+            <Border Background="#F4F4F4" CornerRadius="4" Padding="10" Margin="0,0,0,12"
+                    Visibility="{Binding HasBreakdown, Converter={StaticResource BoolToVis}}">
+                <StackPanel>
+                    <TextBlock Text="SCORE BREAKDOWN" Style="{StaticResource SectionLabel}"/>
+                    <TextBlock Text="{Binding TopCandidateName}" FontWeight="SemiBold" FontSize="12" Margin="0,0,0,6"/>
+                    <ItemsControl ItemsSource="{Binding TopBreakdown}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="0,2">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="80"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="32"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="{Binding Label}" FontSize="11" VerticalAlignment="Center"/>
+                                    <Border Grid.Column="1" HorizontalAlignment="Left" Height="12"
+                                            Width="{Binding BarWidth}" CornerRadius="2"
+                                            Background="#185FA5" VerticalAlignment="Center"/>
+                                    <TextBlock Grid.Column="2" Text="{Binding Contribution, StringFormat=F0}"
+                                               FontSize="11" TextAlignment="Right" VerticalAlignment="Center"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Border>
+
+            <!-- Model selector -->
+            <Border Background="#F4F4F4" CornerRadius="4" Padding="10,6" Margin="0,0,0,12">
+                <DockPanel>
+                    <TextBlock Text="Model" Foreground="#666" FontSize="11" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <ComboBox ItemsSource="{Binding AvailableModels}"
+                              SelectedItem="{Binding SelectedModel}"
+                              FontSize="11"/>
+                </DockPanel>
+            </Border>
+
+            <!-- Chat -->
+            <TextBlock Text="ASSISTANT" Style="{StaticResource SectionLabel}" Margin="0,8,0,6"/>
+            <Border BorderBrush="#DDD" BorderThickness="1" CornerRadius="4" Padding="8" MinHeight="220" MaxHeight="420">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <ItemsControl ItemsSource="{Binding ChatMessages}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Margin="0,0,0,8">
+                                    <TextBlock Text="{Binding Prefix, Mode=OneWay}"
+                                               FontWeight="SemiBold"
+                                               Foreground="{Binding Role, Converter={StaticResource RoleToColor}}"
+                                               FontSize="{Binding Role, Converter={StaticResource RoleToFontSize}}"
+                                               Visibility="{Binding Prefix, Converter={StaticResource NullToVisibility}}"/>
+                                    <TextBox Text="{Binding Text, Mode=OneWay}"
+                                             IsReadOnly="True"
+                                             TextWrapping="Wrap"
+                                             BorderThickness="0"
+                                             Background="Transparent"
+                                             Padding="0"
+                                             IsTabStop="False"
+                                             Foreground="{Binding Role, Converter={StaticResource RoleToColor}}"
+                                             FontSize="{Binding Role, Converter={StaticResource RoleToFontSize}}"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Border>
+
+            <Grid Margin="0,8,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="60"/>
+                </Grid.ColumnDefinitions>
+                <TextBox Grid.Column="0" Text="{Binding UserChatInput, UpdateSourceTrigger=PropertyChanged}"
+                         Padding="6">
+                    <TextBox.InputBindings>
+                        <KeyBinding Key="Enter" Command="{Binding SendChatCommand}"/>
+                    </TextBox.InputBindings>
+                </TextBox>
+                <Button Grid.Column="1" Content="Send" Margin="6,0,0,0"
+                        Style="{StaticResource PrimaryButton}"
+                        Command="{Binding SendChatCommand}"/>
+            </Grid>
+
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

@@ -1,0 +1,25 @@
+{
+    "GeminiApiKey": "YOUR_GEMINI_API_KEY",
+    "CensusApiKey": "YOUR_CENSUS_API_KEY",
+    "FarsDataFolder": "C:\\path\\to\\RoundaboutDesigner\\FARS",
+    "Endpoints": {
+        "Overpass": "https://overpass-api.de/api/interpreter",
+        "Hpms": "https://services2.arcgis.com/FiaPA4ga0iQKduv3/arcgis/rest/services/hpms_v2_view/FeatureServer/0",
+        "Fars": "https://crashviewer.nhtsa.dot.gov/CrashAPI",
+        "Nsi": "https://nsi.sec.usace.army.mil/nsiapi/structures",
+        "CensusAcs": "https://api.census.gov/data",
+        "TigerPlaces": "https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/Places_CouSub_ConCity_SubMCD/MapServer",
+        "TigerCounties": "https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/State_County/MapServer"
+    },
+    "ScoringDefaults": {
+        "Safety": 0.35,
+        "Traffic": 0.25,
+        "Feasibility": 0.2,
+        "Multimodal": 0.1,
+        "Destinations": 0.1,
+        "MinScoreThreshold": 50.0,
+        "MaxIntersectionsCap": 2000,
+        "NsiFootprintBufferM": 45,
+        "DestinationRadiusM": 1000
+    }
+}

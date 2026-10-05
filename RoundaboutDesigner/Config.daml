@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ArcGIS defaultAssembly="RoundaboutDesigner.dll"
+        defaultNamespace="RoundaboutDesigner"
+        xmlns="http://schemas.esri.com/DADF/Registry"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://schemas.esri.com/DADF/Registry file:///C:/Program%20Files/ArcGIS/Pro/bin/ArcGIS.Desktop.Framework.xsd">
+
+  <AddInInfo id="{48ba5c9c-4817-4b5a-ad42-b1ad1a01b559}" version="1.0" desktopVersion="3.6.59527" product="ArcGISPro">
+    <Name>RoundaboutDesigner</Name>   
+    <Description>Screens a city's intersections for roundabout conversion potential, ranks candidates by safety, traffic, feasibility, multimodal, and destination criteria, recommends a type and planning-level cost, and includes a Gemini assistant for refining results.</Description>
+    <Image>Images\AddinDesktop32.png</Image>
+    <Author>Gary Ding</Author>
+    <Company>Dartmouth College</Company>
+    <Date>5/26/2026 11:38:51 AM</Date>
+    <Subject>Map Exploration</Subject>
+    <!-- Note subject can be one or more of these topics:
+                    Content, Framework, Editing, Geodatabase, Geometry, Geoprocessing, Layouts, Map Authoring, Map Exploration -->
+  </AddInInfo>
+
+  <modules>
+	  <insertModule id="RoundaboutDesigner_Module"
+				className="RoundaboutDesigner.RoundaboutDesignerModule"
+				autoLoad="false"
+				caption="Roundabout Designer Module">
+
+		  <tabs>
+			  <tab id="RoundaboutDesigner_Tab" caption="Roundabout">
+				  <group refID="RoundaboutDesigner_Group"/>
+			  </tab>
+		  </tabs>
+
+		  <groups>
+			  <group id="RoundaboutDesigner_Group" caption="Tools" appearsOnAddInTab="false">
+				  <button refID="RoundaboutDesigner_ShowButton" size="large"/>
+			  </group>
+		  </groups>
+
+		  <controls>
+			  <button id="RoundaboutDesigner_ShowButton"
+					  caption="Roundabout Designer"
+					  className="RoundaboutDesigner.UI.RoundaboutDesigner_ShowButton"
+					  loadOnClick="true"
+					  smallImage="GenericButtonBlue16"
+					  largeImage="GenericButtonBlue32">
+				  <tooltip heading="Roundabout Designer">
+					  Identify and rank candidate intersections for roundabout conversion.<disabledText/>
+				  </tooltip>
+			  </button>
+		  </controls>
+
+		  <dockPanes>
+			  <dockPane id="RoundaboutDesigner_DockPane"
+						caption="Roundabout Designer"
+						className="RoundaboutDesigner.UI.RoundaboutDesignerViewModel"
+						dock="group"
+						dockWith="esri_core_projectDockPane">
+				  <content className="RoundaboutDesigner.UI.RoundaboutDesignerView"/>
+			  </dockPane>
+		  </dockPanes>
+
+	  </insertModule>
+  </modules>
+</ArcGIS>

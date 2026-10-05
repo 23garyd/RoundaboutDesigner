@@ -1,0 +1,32 @@
+# Build artifacts
+bin/
+obj/
+*.esriAddinX
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+
+# API keys - never commit these (template: Config/ApiKeys.example.json)
+Config/ApiKeys.json
+**/Config/ApiKeys.json
+
+# Output products
+*.gdb/
+
+# Large raw data (download from NHTSA FARS - see README)
+FARS/
+
+# Local ArcGIS Pro test project (scratch, not part of the add-in)
+RoundaboutTest/
+
+# ArcGIS Pro project scratch
+.backups/
+ImportLog/
+Index/
+
+# OS
+Thumbs.db
+Desktop.ini
+.DS_Store
